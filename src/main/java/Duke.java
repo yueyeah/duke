@@ -1,4 +1,5 @@
 import java.util.Scanner;
+import java.lang.String;
 
 public class Duke {
     // Constants
@@ -15,108 +16,139 @@ public class Duke {
     static final String LIST_CMD = "list";
     static final String DONE = "done";
     static final String DONE_STRING = "Nice! I've marked this task as done:";
+    static final String ADD_STRING = "Got it. I've added this task: ";
+    static final String TODO = "todo";
+    static final String DEADLINE = "deadline";
+    static final String EVENT = "event";
 
     // main function
     public static void main(String[] args) {
-        GreetDuke();
+        greetDuke();
         Task[] listTasks = new Task[100];
         int counter = 0; // counter will count the number of items added to listTasks
         Scanner sc = new Scanner(System.in);
         while (true) {
             String inputString = sc.nextLine();
             inputString = inputString.trim(); // trim any possible trailing whitespace
-            inputString = inputString.toLowerCase(); // convert everything to lower case
             if (inputString.equals(EXIT_CMD)) {
-                ExitDuke();
+                exitDuke();
                 break;
             } else if (inputString.equals(LIST_CMD)){
-                ListDuke(listTasks, counter);
-            } else if (CheckDone(inputString)) {
-                DoneDuke(inputString, listTasks);
+                listDuke(listTasks, counter);
             } else {
-                AddDuke(listTasks, counter, inputString);
-                counter++;
+                String[] inputParts = inputString.split(" ");
+                if (inputParts[0].equals(DONE)) {
+                    doneDuke(inputString, listTasks);
+                } else if (inputParts[0].equals(TODO)) {
+                    addToDoDuke(listTasks, counter, inputString);
+                    counter++;
+                } else if (inputParts[0].equals(DEADLINE)) {
+                    addDeadlineDuke(listTasks, counter, inputString);
+                    counter++;
+                } else if (inputParts[0].equals(EVENT)) {
+                    addEventDuke(listTasks, counter, inputString);
+                    counter++;
+                }
             }
         }
     }
 
     // Print a line.
-    static void PrintLine(String str) {
+    static void printLine(String str) {
         System.out.println(str);
     }
 
     // Actions to be taken upon initialising Duke
-    static void GreetDuke() {
-        PrintLine(HORIZONTAL_LINE);
-        PrintLine(LOGO);
-        PrintLine(GREETING);
-        PrintLine(HORIZONTAL_LINE);
+    static void greetDuke() {
+        printLine(HORIZONTAL_LINE);
+        printLine(LOGO);
+        printLine(GREETING);
+        printLine(HORIZONTAL_LINE);
     }
 
     // Actions to be taken before exiting Duke
-    static void ExitDuke() {
-        PrintLine(HORIZONTAL_LINE);
-        PrintLine(BYE_STRING + "\n");
-        PrintLine(HORIZONTAL_LINE);
+    static void exitDuke() {
+        printLine(HORIZONTAL_LINE);
+        printLine(BYE_STRING + "\n");
+        printLine(HORIZONTAL_LINE);
+    }
+
+    // Add todos to list.
+    static void addToDoDuke(Task[] arr, int pos, String input) {
+        Scanner sc = new Scanner(input);
+        sc.next(); // ignore todo_word
+        if (sc.hasNext()) {
+            ToDo newToDo = new ToDo(sc.nextLine());
+            arr[pos] = newToDo;
+            printLine(HORIZONTAL_LINE);
+            printLine(ADD_STRING);
+            printLine(arr[pos].toString());
+            pos++;
+            printLine("Now you have " + pos + " tasks in the list.\n");
+            printLine(HORIZONTAL_LINE);
+        }
+    }
+
+    // Add deadlines to list.
+    static void addDeadlineDuke(Task[] arr, int pos, String input) {
+        Scanner sc = new Scanner(input);
+        sc.next(); // ignore deadline word
+        if (sc.hasNext()) {
+            String restOfInput = sc.nextLine();
+            String[] parts = restOfInput.split("/by");
+            String description = parts[0].trim();
+            String byString = parts[1].trim();
+            Deadline newDeadline = new Deadline(description, byString);
+            arr[pos] = newDeadline;
+            printLine(HORIZONTAL_LINE);
+            printLine(ADD_STRING);
+            printLine(arr[pos].toString());
+            pos++;
+            printLine("Now you have " + pos + " tasks in the list.\n");
+            printLine(HORIZONTAL_LINE);
+        }
     }
 
     // Add tasks to list.
-    static void AddDuke(Task[] arr, int pos, String input) {
-        Task newTask = new Task(input);
-        arr[pos] = newTask;
-        PrintLine(HORIZONTAL_LINE);
-        PrintLine("added: " + input + "\n");
-        PrintLine(HORIZONTAL_LINE);
+    static void addEventDuke(Task[] arr, int pos, String input) {
+        Scanner sc = new Scanner(input);
+        sc.next(); // ignore event word
+        if (sc.hasNext()) {
+            String restOfInput = sc.nextLine();
+            String[] parts = restOfInput.split("/at");
+            String description = parts[0].trim();
+            String[] dateAndTime = parts[1].trim().split(" ");
+            String date = dateAndTime[0].trim();
+            String time = dateAndTime[1].trim();
+            Event newEvent = new Event(description, date, time);
+            arr[pos] = newEvent;
+            printLine(HORIZONTAL_LINE);
+            printLine(ADD_STRING);
+            printLine(arr[pos].toString());
+            pos++;
+            printLine("Now you have " + pos + " tasks in the list.\n");
+            printLine(HORIZONTAL_LINE);
+        }
     }
 
     // List out all the tasks.
-    static void ListDuke(Task[] listTasks, int pos) {
-        PrintLine(HORIZONTAL_LINE);
+    static void listDuke(Task[] listTasks, int pos) {
+        printLine(HORIZONTAL_LINE);
         for (int a = 0; a < pos; a++) {
             int displayNum = a + 1;
-            String taskStatus;
-            if (listTasks[a].isDone()) {
-                taskStatus = "\u2713";
-            } else {
-                taskStatus = "\u2718";
-            }
-            PrintLine(displayNum + ". [" + taskStatus + "] "+ listTasks[a] + "\n");
+            printLine(displayNum + ". " + listTasks[a] + "\n");
         }
-        PrintLine(HORIZONTAL_LINE);
+        printLine(HORIZONTAL_LINE);
     }
 
-    // Handle checking whether the inputSting contains the done keyword.
-    static boolean CheckDone(String inputString) {
-        return (inputString.length() >= 4) && (inputString.substring(0,4).equals(DONE));
-    }
-
-    static void DoneDuke(String inputString, Task[] listTasks) {
+    static void doneDuke(String inputString, Task[] listTasks) {
         String[] tokens = inputString.split(" ");
         int taskNum = Integer.parseInt(tokens[1]);
         int index = taskNum - 1; // list is zero-indexed while user sees a one-indexed list
-        listTasks[index].doTask();
-        PrintLine(HORIZONTAL_LINE);
-        PrintLine(DONE_STRING);
-        PrintLine("[\u2713] " + listTasks[index] + "\n");
-        PrintLine(HORIZONTAL_LINE);
-    }
-}
-
-class Task {
-    protected String description;
-    protected boolean isCompleted;
-    public Task(String description) {
-        this.description = description;
-        this.isCompleted = false;
-    }
-    public boolean isDone() {
-        return this.isCompleted;
-    }
-    public String toString() {
-        return this.description;
-    }
-    public boolean doTask() {
-        this.isCompleted = true;
-        return this.isCompleted;
+        listTasks[index].markAsDone();
+        printLine(HORIZONTAL_LINE);
+        printLine(DONE_STRING);
+        printLine(listTasks[index] + "\n");
+        printLine(HORIZONTAL_LINE);
     }
 }
