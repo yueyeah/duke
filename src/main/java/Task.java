@@ -11,6 +11,10 @@ public class Task {
         return (isDone ? "[\u2713]" : "[\u2718]");
     }
 
+    public String getTaskType() {
+        return "task";
+    }
+
     @Override
     public String toString() {
         return description;
