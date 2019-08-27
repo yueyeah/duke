@@ -36,18 +36,38 @@ public class Duke {
             } else if (inputString.equals(LIST_CMD)){
                 listDuke(listTasks, counter);
             } else {
-                String[] inputParts = inputString.split(" ");
-                if (inputParts[0].equals(DONE)) {
-                    doneDuke(inputString, listTasks);
-                } else if (inputParts[0].equals(TODO)) {
-                    addToDoDuke(listTasks, counter, inputString);
-                    counter++;
-                } else if (inputParts[0].equals(DEADLINE)) {
-                    addDeadlineDuke(listTasks, counter, inputString);
-                    counter++;
-                } else if (inputParts[0].equals(EVENT)) {
-                    addEventDuke(listTasks, counter, inputString);
-                    counter++;
+                try {
+                    String[] inputParts = inputString.split(" ");
+                    if (inputParts[0].equals(DONE)) {
+                        doneDuke(inputString, listTasks);
+                    } else if (inputParts[0].equals(TODO)) {
+                        addToDoDuke(listTasks, counter, inputString);
+                        counter++;
+                    } else if (inputParts[0].equals(DEADLINE)) {
+                        addDeadlineDuke(listTasks, counter, inputString);
+                        counter++;
+                    } else if (inputParts[0].equals(EVENT)) {
+                        addEventDuke(listTasks, counter, inputString);
+                        counter++;
+                    } else {
+                        throw new InvalidDukeInputException(); // define what to do for DukeException
+                    }
+                } catch (InvalidDukeInputException e) {
+                    printLine(HORIZONTAL_LINE);
+                    printLine("☹ OOPS!!! I'm sorry, but I don't know what that means :-(" + "\n");
+                    printLine(HORIZONTAL_LINE);
+                } catch (ToDoEmptyException e) {
+                    printLine(HORIZONTAL_LINE);
+                    printLine("☹ OOPS!!! The description of a todo cannot be empty." + "\n");
+                    printLine(HORIZONTAL_LINE);
+                } catch (DeadlineEmptyException e) {
+                    printLine(HORIZONTAL_LINE);
+                    printLine("☹ OOPS!!! The description of a deadline cannot be empty." + "\n");
+                    printLine(HORIZONTAL_LINE);
+                } catch (EventEmptyException e) {
+                    printLine(HORIZONTAL_LINE);
+                    printLine("☹ OOPS!!! The description of a event cannot be empty." + "\n");
+                    printLine(HORIZONTAL_LINE);
                 }
             }
         }
@@ -74,7 +94,7 @@ public class Duke {
     }
 
     // Add todos to list.
-    static void addToDoDuke(Task[] arr, int pos, String input) {
+    static void addToDoDuke(Task[] arr, int pos, String input) throws ToDoEmptyException {
         Scanner sc = new Scanner(input);
         sc.next(); // ignore todo_word
         if (sc.hasNext()) {
@@ -86,11 +106,13 @@ public class Duke {
             pos++;
             printLine("Now you have " + pos + " tasks in the list.\n");
             printLine(HORIZONTAL_LINE);
+        } else {
+            throw new ToDoEmptyException();
         }
     }
 
     // Add deadlines to list.
-    static void addDeadlineDuke(Task[] arr, int pos, String input) {
+    static void addDeadlineDuke(Task[] arr, int pos, String input) throws DeadlineEmptyException {
         Scanner sc = new Scanner(input);
         sc.next(); // ignore deadline word
         if (sc.hasNext()) {
@@ -106,11 +128,13 @@ public class Duke {
             pos++;
             printLine("Now you have " + pos + " tasks in the list.\n");
             printLine(HORIZONTAL_LINE);
+        } else {
+            throw new DeadlineEmptyException();
         }
     }
 
     // Add tasks to list.
-    static void addEventDuke(Task[] arr, int pos, String input) {
+    static void addEventDuke(Task[] arr, int pos, String input) throws EventEmptyException {
         Scanner sc = new Scanner(input);
         sc.next(); // ignore event word
         if (sc.hasNext()) {
@@ -128,6 +152,8 @@ public class Duke {
             pos++;
             printLine("Now you have " + pos + " tasks in the list.\n");
             printLine(HORIZONTAL_LINE);
+        } else {
+            throw new EventEmptyException();
         }
     }
 
@@ -152,3 +178,8 @@ public class Duke {
         printLine(HORIZONTAL_LINE);
     }
 }
+
+class InvalidDukeInputException extends Exception {}
+class ToDoEmptyException extends Exception {}
+class EventEmptyException extends Exception {}
+class DeadlineEmptyException extends Exception {}
