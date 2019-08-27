@@ -1,5 +1,9 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Scanner;
+import java.util.ArrayList;
 import java.lang.String;
+import java.io.PrintWriter;
 
 public class Duke {
     // Constants
@@ -20,18 +24,18 @@ public class Duke {
     static final String TODO = "todo";
     static final String DEADLINE = "deadline";
     static final String EVENT = "event";
-
+    static final String FILEPATH = "D:\\duke\\src\\main\\java\\duke.txt";
     // main function
     public static void main(String[] args) {
         greetDuke();
-        Task[] listTasks = new Task[100];
-        int counter = 0; // counter will count the number of items added to listTasks
+        ArrayList<Task> listTasks = readFileDuke();
+        int counter = listTasks.size(); // counter will count the number of items added to listTasks
         Scanner sc = new Scanner(System.in);
         while (true) {
             String inputString = sc.nextLine();
             inputString = inputString.trim(); // trim any possible trailing whitespace
             if (inputString.equals(EXIT_CMD)) {
-                exitDuke();
+                exitDuke(listTasks);
                 break;
             } else if (inputString.equals(LIST_CMD)){
                 listDuke(listTasks, counter);
@@ -86,23 +90,70 @@ public class Duke {
         printLine(HORIZONTAL_LINE);
     }
 
+    static ArrayList<Task> readFileDuke() {
+        ArrayList<Task> listTasks = new ArrayList<Task>();
+        File file = new File(FILEPATH);
+        try {
+            Scanner sc1 = new Scanner(file);
+            while (sc1.hasNextLine()) {
+                String fileString = sc1.nextLine();
+                String[] fileParts = fileString.split(" ");
+                Scanner sc2 = new Scanner(fileString);
+                sc2.next();
+                if (fileParts[0].equals(TODO)) {
+                    ToDo newToDo = new ToDo(sc2.nextLine());
+                    listTasks.add(newToDo);
+                } else if (fileParts[0].equals(DEADLINE)) {
+                    String restOfString = sc2.nextLine();
+                    String[] parts = restOfString.split("/by");
+                    String description = parts[0].trim();
+                    String byString = parts[1].trim();
+                    Deadline newDeadline = new Deadline(description, byString);
+                    listTasks.add(newDeadline);
+                } else if (fileParts[0].equals(EVENT)) {
+                    String restOfInput = sc2.nextLine();
+                    String[] parts = restOfInput.split("/at");
+                    String description = parts[0].trim();
+                    String[] dateAndTime = parts[1].trim().split(" ");
+                    String date = dateAndTime[0].trim();
+                    String time = dateAndTime[1].trim();
+                    Event newEvent = new Event(description, date, time);
+                    listTasks.add(newEvent);
+                }
+            }
+            sc1.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return listTasks;
+    }
+
     // Actions to be taken before exiting Duke
-    static void exitDuke() {
+    static void exitDuke(ArrayList<Task> listTasks) {
+        try {
+            PrintWriter writer = new PrintWriter(FILEPATH);
+            for (Task eachTask: listTasks) {
+                writer.println(eachTask.getTaskType());
+            }
+            writer.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
         printLine(HORIZONTAL_LINE);
         printLine(BYE_STRING + "\n");
         printLine(HORIZONTAL_LINE);
     }
 
     // Add todos to list.
-    static void addToDoDuke(Task[] arr, int pos, String input) throws ToDoEmptyException {
+    static void addToDoDuke(ArrayList<Task> arr, int pos, String input) throws ToDoEmptyException {
         Scanner sc = new Scanner(input);
         sc.next(); // ignore todo_word
         if (sc.hasNext()) {
             ToDo newToDo = new ToDo(sc.nextLine());
-            arr[pos] = newToDo;
+            arr.add(pos, newToDo);
             printLine(HORIZONTAL_LINE);
             printLine(ADD_STRING);
-            printLine(arr[pos].toString());
+            printLine(arr.get(pos).toString());
             pos++;
             printLine("Now you have " + pos + " tasks in the list.\n");
             printLine(HORIZONTAL_LINE);
@@ -112,7 +163,7 @@ public class Duke {
     }
 
     // Add deadlines to list.
-    static void addDeadlineDuke(Task[] arr, int pos, String input) throws DeadlineEmptyException {
+    static void addDeadlineDuke(ArrayList<Task> arr, int pos, String input) throws DeadlineEmptyException {
         Scanner sc = new Scanner(input);
         sc.next(); // ignore deadline word
         if (sc.hasNext()) {
@@ -121,10 +172,10 @@ public class Duke {
             String description = parts[0].trim();
             String byString = parts[1].trim();
             Deadline newDeadline = new Deadline(description, byString);
-            arr[pos] = newDeadline;
+            arr.add(pos, newDeadline);
             printLine(HORIZONTAL_LINE);
             printLine(ADD_STRING);
-            printLine(arr[pos].toString());
+            printLine(arr.get(pos).toString());
             pos++;
             printLine("Now you have " + pos + " tasks in the list.\n");
             printLine(HORIZONTAL_LINE);
@@ -134,7 +185,7 @@ public class Duke {
     }
 
     // Add tasks to list.
-    static void addEventDuke(Task[] arr, int pos, String input) throws EventEmptyException {
+    static void addEventDuke(ArrayList<Task> arr, int pos, String input) throws EventEmptyException {
         Scanner sc = new Scanner(input);
         sc.next(); // ignore event word
         if (sc.hasNext()) {
@@ -145,10 +196,10 @@ public class Duke {
             String date = dateAndTime[0].trim();
             String time = dateAndTime[1].trim();
             Event newEvent = new Event(description, date, time);
-            arr[pos] = newEvent;
+            arr.add(pos, newEvent);
             printLine(HORIZONTAL_LINE);
             printLine(ADD_STRING);
-            printLine(arr[pos].toString());
+            printLine(arr.get(pos).toString());
             pos++;
             printLine("Now you have " + pos + " tasks in the list.\n");
             printLine(HORIZONTAL_LINE);
@@ -158,23 +209,23 @@ public class Duke {
     }
 
     // List out all the tasks.
-    static void listDuke(Task[] listTasks, int pos) {
+    static void listDuke(ArrayList<Task> listTasks, int pos) {
         printLine(HORIZONTAL_LINE);
         for (int a = 0; a < pos; a++) {
             int displayNum = a + 1;
-            printLine(displayNum + ". " + listTasks[a] + "\n");
+            printLine(displayNum + ". " + listTasks.get(a) + "\n");
         }
         printLine(HORIZONTAL_LINE);
     }
 
-    static void doneDuke(String inputString, Task[] listTasks) {
+    static void doneDuke(String inputString, ArrayList<Task> listTasks) {
         String[] tokens = inputString.split(" ");
         int taskNum = Integer.parseInt(tokens[1]);
         int index = taskNum - 1; // list is zero-indexed while user sees a one-indexed list
-        listTasks[index].markAsDone();
+        listTasks.get(index).markAsDone();
         printLine(HORIZONTAL_LINE);
         printLine(DONE_STRING);
-        printLine(listTasks[index] + "\n");
+        printLine(listTasks.get(index) + "\n");
         printLine(HORIZONTAL_LINE);
     }
 }
