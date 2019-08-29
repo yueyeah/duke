@@ -25,6 +25,9 @@ public class Duke {
     static final String DEADLINE = "deadline";
     static final String EVENT = "event";
     static final String DELETE = "delete";
+    static final String DELETE_STRING = "Noted. I've removed this task: ";
+    static final String TASK_NUM_STRING_1  ="Now you have ";
+    static final String TASK_NUM_STRING_2 = " tasks in the list.";
     static final String FILEPATH = "D:\\duke\\src\\main\\java\\duke.txt";
     // main function
     public static void main(String[] args) {
@@ -50,6 +53,8 @@ public class Duke {
                         addDeadlineDuke(listTasks, inputString);
                     } else if (inputParts[0].equals(EVENT)) {
                         addEventDuke(listTasks, inputString);
+                    } else if (inputParts[0].equals(DELETE)) {
+                        deleteTaskDuke(listTasks, inputString);
                     } else {
                         throw new InvalidDukeInputException(); // define what to do for DukeException
                     }
@@ -68,6 +73,10 @@ public class Duke {
                 } catch (EventEmptyException e) {
                     printLine(HORIZONTAL_LINE);
                     printLine("☹ OOPS!!! The description of a event cannot be empty." + "\n");
+                    printLine(HORIZONTAL_LINE);
+                } catch (DeleteInvalidException e) {
+                    printLine(HORIZONTAL_LINE);
+                    printLine("☹ OOPS!!! Please enter the valid number of a Task." + "\n");
                     printLine(HORIZONTAL_LINE);
                 }
             }
@@ -205,6 +214,21 @@ public class Duke {
         }
     }
 
+    static void deleteTaskDuke(ArrayList<Task> arr, String input) throws DeleteInvalidException {
+        Scanner sc = new Scanner(input);
+        sc.next(); // ignore delete word
+        if (sc.hasNextInt()) {
+            int taskIdx = sc.nextInt() - 1;
+            printLine(HORIZONTAL_LINE);
+            printLine(DELETE_STRING);
+            printLine(arr.get(taskIdx).toString());
+            arr.remove(taskIdx);
+            printLine(TASK_NUM_STRING_1 + arr.size() + TASK_NUM_STRING_2);
+        } else {
+            throw new DeleteInvalidException();
+        }
+    }
+
     // List out all the tasks.
     static void listDuke(ArrayList<Task> listTasks) {
         printLine(HORIZONTAL_LINE);
@@ -231,3 +255,4 @@ class InvalidDukeInputException extends Exception {}
 class ToDoEmptyException extends Exception {}
 class EventEmptyException extends Exception {}
 class DeadlineEmptyException extends Exception {}
+class DeleteInvalidException extends Exception {}
