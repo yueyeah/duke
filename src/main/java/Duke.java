@@ -25,6 +25,9 @@ public class Duke {
     static final String DEADLINE = "deadline";
     static final String EVENT = "event";
     static final String DELETE = "delete";
+    static final String FIND = "find";
+    static final String FIND_STRING = "Here are the matching tasks in your list: ";
+    static final String NONE_FOUND = "Sorry, could not find any tasks containing your search words. ";
     static final String FILEPATH = "D:\\duke\\src\\main\\java\\duke.txt";
     // main function
     public static void main(String[] args) {
@@ -50,6 +53,8 @@ public class Duke {
                         addDeadlineDuke(listTasks, inputString);
                     } else if (inputParts[0].equals(EVENT)) {
                         addEventDuke(listTasks, inputString);
+                    } else if (inputParts[0].equals(FIND)) {
+                        findTaskDuke(listTasks, inputString);
                     } else {
                         throw new InvalidDukeInputException(); // define what to do for DukeException
                     }
@@ -68,6 +73,10 @@ public class Duke {
                 } catch (EventEmptyException e) {
                     printLine(HORIZONTAL_LINE);
                     printLine("☹ OOPS!!! The description of a event cannot be empty." + "\n");
+                    printLine(HORIZONTAL_LINE);
+                } catch (FindEmptyException e) {
+                    printLine(HORIZONTAL_LINE);
+                    printLine("☹ OOPS!!! Please enter a valid search word." + "\n");
                     printLine(HORIZONTAL_LINE);
                 }
             }
@@ -205,6 +214,29 @@ public class Duke {
         }
     }
 
+    static void findTaskDuke(ArrayList<Task> arr, String input) throws FindEmptyException {
+        Scanner sc = new Scanner(input);
+        sc.next(); // ignore find word
+        if (sc.hasNext()) {
+            String searchWord = sc.nextLine();
+            printLine(HORIZONTAL_LINE);
+            printLine(FIND_STRING);
+            int countFound = 0;
+            for (Task eachTask : arr) {
+                if (eachTask.toString().contains(searchWord)) {
+                    countFound++;
+                    printLine(countFound + "." + eachTask);
+                }
+            }
+            if (countFound == 0) {
+                printLine(NONE_FOUND);
+            }
+            printLine(HORIZONTAL_LINE);
+        } else {
+            throw new FindEmptyException();
+        }
+    }
+
     // List out all the tasks.
     static void listDuke(ArrayList<Task> listTasks) {
         printLine(HORIZONTAL_LINE);
@@ -231,3 +263,4 @@ class InvalidDukeInputException extends Exception {}
 class ToDoEmptyException extends Exception {}
 class EventEmptyException extends Exception {}
 class DeadlineEmptyException extends Exception {}
+class FindEmptyException extends Exception {}
