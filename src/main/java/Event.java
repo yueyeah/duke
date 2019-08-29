@@ -15,7 +15,7 @@ public class Event extends Task {
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HHmm");
             this.date = formatter.parse(date_string + " " + time_string);
         } catch (ParseException e) {
-            e.printStackTrace();
+            System.out.println("☹ OOPS!!! Please enter your date and time for your event in the following format: dd/MM/yyyy HHmm");
         }
     }
 

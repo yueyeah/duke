@@ -13,7 +13,7 @@ public class Deadline extends Task {
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             date = formatter.parse(this.by);
         } catch (ParseException e) {
-            e.printStackTrace();
+            System.out.println("☹ OOPS!!! Please enter your date for deadline in the following format: dd/MM/yyyy");
         }
     }
 
