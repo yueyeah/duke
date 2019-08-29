@@ -24,12 +24,12 @@ public class Duke {
     static final String TODO = "todo";
     static final String DEADLINE = "deadline";
     static final String EVENT = "event";
+    static final String DELETE = "delete";
     static final String FILEPATH = "D:\\duke\\src\\main\\java\\duke.txt";
     // main function
     public static void main(String[] args) {
         greetDuke();
         ArrayList<Task> listTasks = readFileDuke();
-        int counter = listTasks.size(); // counter will count the number of items added to listTasks
         Scanner sc = new Scanner(System.in);
         while (true) {
             String inputString = sc.nextLine();
@@ -38,21 +38,18 @@ public class Duke {
                 exitDuke(listTasks);
                 break;
             } else if (inputString.equals(LIST_CMD)){
-                listDuke(listTasks, counter);
+                listDuke(listTasks);
             } else {
                 try {
                     String[] inputParts = inputString.split(" ");
                     if (inputParts[0].equals(DONE)) {
                         doneDuke(inputString, listTasks);
                     } else if (inputParts[0].equals(TODO)) {
-                        addToDoDuke(listTasks, counter, inputString);
-                        counter++;
+                        addToDoDuke(listTasks, inputString);
                     } else if (inputParts[0].equals(DEADLINE)) {
-                        addDeadlineDuke(listTasks, counter, inputString);
-                        counter++;
+                        addDeadlineDuke(listTasks, inputString);
                     } else if (inputParts[0].equals(EVENT)) {
-                        addEventDuke(listTasks, counter, inputString);
-                        counter++;
+                        addEventDuke(listTasks, inputString);
                     } else {
                         throw new InvalidDukeInputException(); // define what to do for DukeException
                     }
@@ -145,16 +142,16 @@ public class Duke {
     }
 
     // Add todos to list.
-    static void addToDoDuke(ArrayList<Task> arr, int pos, String input) throws ToDoEmptyException {
+    static void addToDoDuke(ArrayList<Task> arr, String input) throws ToDoEmptyException {
         Scanner sc = new Scanner(input);
         sc.next(); // ignore todo_word
         if (sc.hasNext()) {
             ToDo newToDo = new ToDo(sc.nextLine());
-            arr.add(pos, newToDo);
+            arr.add(newToDo);
             printLine(HORIZONTAL_LINE);
             printLine(ADD_STRING);
-            printLine(arr.get(pos).toString());
-            pos++;
+            int pos = arr.size();
+            printLine(arr.get(pos - 1).toString());
             printLine("Now you have " + pos + " tasks in the list.\n");
             printLine(HORIZONTAL_LINE);
         } else {
@@ -163,7 +160,7 @@ public class Duke {
     }
 
     // Add deadlines to list.
-    static void addDeadlineDuke(ArrayList<Task> arr, int pos, String input) throws DeadlineEmptyException {
+    static void addDeadlineDuke(ArrayList<Task> arr, String input) throws DeadlineEmptyException {
         Scanner sc = new Scanner(input);
         sc.next(); // ignore deadline word
         if (sc.hasNext()) {
@@ -172,11 +169,11 @@ public class Duke {
             String description = parts[0].trim();
             String byString = parts[1].trim();
             Deadline newDeadline = new Deadline(description, byString);
-            arr.add(pos, newDeadline);
+            arr.add(newDeadline);
+            int pos = arr.size();
             printLine(HORIZONTAL_LINE);
             printLine(ADD_STRING);
-            printLine(arr.get(pos).toString());
-            pos++;
+            printLine(arr.get(pos - 1).toString());
             printLine("Now you have " + pos + " tasks in the list.\n");
             printLine(HORIZONTAL_LINE);
         } else {
@@ -185,7 +182,7 @@ public class Duke {
     }
 
     // Add tasks to list.
-    static void addEventDuke(ArrayList<Task> arr, int pos, String input) throws EventEmptyException {
+    static void addEventDuke(ArrayList<Task> arr, String input) throws EventEmptyException {
         Scanner sc = new Scanner(input);
         sc.next(); // ignore event word
         if (sc.hasNext()) {
@@ -196,11 +193,11 @@ public class Duke {
             String date = dateAndTime[0].trim();
             String time = dateAndTime[1].trim();
             Event newEvent = new Event(description, date, time);
-            arr.add(pos, newEvent);
+            arr.add(newEvent);
+            int pos = arr.size();
             printLine(HORIZONTAL_LINE);
             printLine(ADD_STRING);
-            printLine(arr.get(pos).toString());
-            pos++;
+            printLine(arr.get(pos - 1).toString());
             printLine("Now you have " + pos + " tasks in the list.\n");
             printLine(HORIZONTAL_LINE);
         } else {
@@ -209,9 +206,9 @@ public class Duke {
     }
 
     // List out all the tasks.
-    static void listDuke(ArrayList<Task> listTasks, int pos) {
+    static void listDuke(ArrayList<Task> listTasks) {
         printLine(HORIZONTAL_LINE);
-        for (int a = 0; a < pos; a++) {
+        for (int a = 0; a < listTasks.size(); a++) {
             int displayNum = a + 1;
             printLine(displayNum + ". " + listTasks.get(a) + "\n");
         }
