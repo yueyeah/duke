@@ -1,0 +1,4 @@
+deadline take /by 01/12/2019
+event s /at 04/05/2018 2300
+todo retire early
+bye
