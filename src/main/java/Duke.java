@@ -1,8 +1,15 @@
 import java.util.ArrayList;
 import java.lang.String;
 
+/**
+ * The main class for the Duke program.
+ */
 public class Duke {
-    // main function
+    /**
+     * Main function for Duke.
+     *
+     * @param args command line arguments, not used in Duke.
+     */
     public static void main(String[] args) {
         Ui.printGreet();
         ArrayList<Task> listTasks = Storage.readFile();
@@ -55,4 +62,8 @@ public class Duke {
     }
 }
 
+/**
+ * The exception for generic invalid input that cannot be
+ * sorted out into invalid commands.
+ */
 class InvalidDukeInputException extends Exception {}

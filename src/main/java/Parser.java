@@ -1,5 +1,10 @@
+/**
+ * Parser class handles the parsing of the input from user.
+ */
 public class Parser {
-    // Constants
+    /**
+     * These are the constants that are used in the decideCmd method.
+     */
     static final String EXIT_CMD = "bye";
     static final String LIST_CMD = "list";
     static final String DONE_CMD = "done";
@@ -9,6 +14,17 @@ public class Parser {
     static final String DELETE_CMD = "delete";
     static final String FIND_CMD = "find";
 
+    /**
+     * Takes in the user input and interprets the command that the user
+     * intended. Returns an enum called cmd that specifies the type of
+     * command, which is used to decide the next course of action for
+     * the list of tasks. If the user has not keyed in a valid command,
+     * throws InvalidDukeInputException.
+     *
+     * @param inputString User input
+     * @return The type of command that the user has input.
+     * @throws InvalidDukeInputException If user has keyed in a generic incorrect input.
+     */
     public static cmd decideCmd(String inputString) throws InvalidDukeInputException {
         if (inputString.equals(EXIT_CMD)) {
             return cmd.EXIT;
@@ -35,6 +51,9 @@ public class Parser {
     }
 }
 
+/**
+ * enum class that specifies the type of command based on the user input.
+ */
 enum cmd {
     EXIT, LIST, DONE, TODO, DEADLINE, EVENT, DELETE, FIND
 }

@@ -4,9 +4,22 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * Storage class handles the writing and reading of task
+ * list from disk.
+ */
 public class Storage {
+    /**
+     * Hardcoded file path constant.
+     */
     static final String FILEPATH = "D:\\duke\\src\\main\\java\\duke.txt";
 
+    /**
+     * Reads the file, initialises each task correctly as a ToDo,
+     * Event or Deadline, then enters them into the list.
+     *
+     * @return The list of tasks.
+     */
     public static ArrayList<Task> readFile() {
         ArrayList<Task> listTasks = new ArrayList<Task>();
         File file = new File(FILEPATH);
@@ -45,6 +58,12 @@ public class Storage {
         return listTasks;
     }
 
+    /**
+     * When the user has ended usage, write all the tasks in the list
+     * to the file path and say goodbye to the user.
+     *
+     * @param listTasks The list of tasks.
+     */
     public static void exit(ArrayList<Task> listTasks) {
         try {
             PrintWriter writer = new PrintWriter(FILEPATH);

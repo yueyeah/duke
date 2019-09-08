@@ -1,14 +1,32 @@
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * TaskList class maintains the main list of tasks. Will
+ * handle all manipulation of the list.
+ */
 public class TaskList {
+    /**
+     * The list of tasks.
+     */
     protected ArrayList<Task> ListTasks;
 
+    /**
+     * Constructor method.
+     *
+     * @param list The list of tasks read from disk in the Storage class.
+     */
     public TaskList(ArrayList<Task> list) {
         ListTasks = list;
     }
 
-    // Add todos to list.
+    /**
+     * Extracts ToDo description from the input and adds ToDo
+     * to the list of Tasks.
+     *
+     * @param input User input.
+     * @throws ToDoEmptyException If user doesn't key in any ToDo.
+     */
     public void addToDo(String input) throws ToDoEmptyException {
         Scanner sc = new Scanner(input);
         sc.next(); // ignore todo_word
@@ -22,7 +40,13 @@ public class TaskList {
         }
     }
 
-    // Add deadlines to the list.
+    /**
+     * Extracts Deadline description and date from the input and adds
+     * Deadline to the list of Tasks.
+     *
+     * @param input User input.
+     * @throws DeadlineEmptyException If user doesn't key in any Deadline.
+     */
     public void addDeadline(String input) throws DeadlineEmptyException {
         Scanner sc = new Scanner(input);
         sc.next(); // ignore deadline word
@@ -40,7 +64,13 @@ public class TaskList {
         }
     }
 
-    // Add tasks to list.
+    /**
+     * Extracts Event description, date and time from the input and adds
+     * Event to the list of Tasks.
+     *
+     * @param input User input.
+     * @throws EventEmptyException If user doesn't key in any Event.
+     */
     public void addEvent(String input) throws EventEmptyException {
         Scanner sc = new Scanner(input);
         sc.next(); // ignore event word
@@ -60,7 +90,14 @@ public class TaskList {
         }
     }
 
-    // Delete tasks from list.
+    /**
+     * Extracts the task to be deleted from the user input,
+     * and deletes that task from the list of tasks.
+     *
+     * @param input User input.
+     * @throws DeleteInvalidException If user has not keyed in a valid task to
+     * be deleted.
+     */
     public void deleteTask(String input) throws DeleteInvalidException {
         Scanner sc = new Scanner(input);
         sc.next(); // ignore delete word
@@ -75,6 +112,14 @@ public class TaskList {
         }
     }
 
+    /**
+     * Extracts the task to be searched from the user input,
+     * and then searches for the task in the list of tasks. Will output
+     * the task description and status.
+     *
+     * @param input User input.
+     * @throws FindEmptyException If user doesn't key in a task to be searched.
+     */
     public void findTask(String input) throws FindEmptyException {
         Scanner sc = new Scanner(input);
         sc.next(); // ignore find word
@@ -98,7 +143,10 @@ public class TaskList {
         }
     }
 
-    // List out all the tasks.
+    /**
+     * Lists all the tasks in the list, printing their description
+     * and their status.
+     */
     public void list() {
         Ui.printHoriLine();
         for (int a = 0; a < this.ListTasks.size(); a++) {
@@ -108,7 +156,12 @@ public class TaskList {
         Ui.printHoriLine();
     }
 
-    // Mark task as done.
+    /**
+     * Extracts the done task from the user input and changing the status of
+     * that task to Done.
+     *
+     * @param inputString User input.
+     */
     public void doneTask(String inputString) {
         String[] tokens = inputString.split(" ");
         int taskNum = Integer.parseInt(tokens[1]);
@@ -121,6 +174,9 @@ public class TaskList {
     }
 }
 
+/**
+ * Below are the various exceptions that are thrown by the methods in the TaskList class.
+ */
 class ToDoEmptyException extends Exception {}
 class EventEmptyException extends Exception {}
 class DeadlineEmptyException extends Exception {}
